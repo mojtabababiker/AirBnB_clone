@@ -14,7 +14,9 @@
 
 ## What is AirBnB - The Console:
 
-     	 **AirBnb Console is a command line interpreter, which build on `python3` and can be run in any terminal**.
+
+**AirBnb Console is a command line interpreter, which build on `python3` and can be run in any terminal**.
+
 
 ### Serives:
 
@@ -24,7 +26,7 @@
 - Update attributes of an object
 - Destroy an object
 
-^Those Seriives will be discussed more below^
+<sub>Those Seriives will be discussed more below<sub>
 
 
 ---
