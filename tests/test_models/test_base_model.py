@@ -4,6 +4,7 @@ This a test module for the BaseModel class from models.base_model
 """
 
 import unittest
+from unittest.mock import patch
 from models.base_model import BaseModel
 from models.base_model import uuid4
 from models.base_model import datetime
@@ -26,9 +27,9 @@ class TestBase(unittest.TestCase):
         self.assertIsInstance(base, BaseModel)
         self.assertTrue(hasattr(base, "id"))
         self.assertTrue(hasattr(base, "created_at"))
-        self.assertTrue(hasattr(base, "updates_at"))
+        self.assertTrue(hasattr(base, "updated_at"))
 
-    @unittest.patch("uuid4")
+    @patch("models.base_model.uuid4")
     def test_id_creation(self, mocked_uuid4):
         """
         Test the base.id attribute value creation
@@ -37,14 +38,14 @@ class TestBase(unittest.TestCase):
         base = BaseModel()
         self.assertEqual(base.id, str(12345))
 
-    @unittest.patch("datetime.today")
+    @patch("models.base_model.datetime")
     def test_created_at_and_updated_at_creation(self, mocked_today):
         """
         Test the base.created_at and updated_at attributes creations
         """
 
         date = "2023-10-11T03:30:45.164253"
-        mocked_today.return_value = date
+        mocked_today.today.return_value = date
         base = BaseModel()
         self.assertEqual(base.created_at, date)
         self.assertEqual(base.updated_at, date)
@@ -55,24 +56,24 @@ class TestBase(unittest.TestCase):
         """
         base = BaseModel()
 
-        base_str = f"[{base.__clase__.__name__}] ({base.id}) {base.__dict__}"
+        base_str = f"[{base.__class__.__name__}] ({base.id}) {base.__dict__}"
         self.assertEqual(str(base), base_str)
 
-    @unittest.patch("datetime.today")
+    @patch("models.base_model.datetime")
     def test_base_save(self, mocked_today):
         """
         Test the BaseModel.save(self) method
         """
         date = "2023-10-11T03:43:25.164253"
-        mocked_today.return_value = date
+        mocked_today.today.return_value = date
         base = BaseModel()
         date = "2023-10-11T03:46:45.164253"
-        mocked_today.return_value = date
+        mocked_today.today.return_value = date
         base.save()
         self.assertEqual(base.updated_at, date)
         self.assertNotEqual(base.updated_at, base.created_at)
 
-        with self.assertRaises("TypeError"):
+        with self.assertRaises(TypeError):
             base.save("extra args")
 
     def test_base_to_dict(self):
@@ -83,19 +84,24 @@ class TestBase(unittest.TestCase):
         base = BaseModel()
         base_dict = base.to_dict()
         dict_values = base_dict.values()
-        self.assertTrue(base.__clase__.__name__ is in dict_values)
-        self.assertTrue(str(base.updated_at) is in dict_values)
-        self.assertTrue(str(base.created_at) is in dict_values)
-        self.assertTrue(base.id is in dict_values)
 
-        with self.assertRiases("TypeError"):
+        self.assertTrue(base.__class__.__name__ in dict_values)
+        self.assertTrue(base.updated_at in dict_values)
+        self.assertTrue(base.created_at in dict_values)
+        self.assertTrue(base.id in dict_values)
+
+        self.assertIsInstance(base_dict['updated_at'], str)
+        self.assertIsInstance(base_dict['created_at'], str)
+        self.assertIsInstance(base_dict['id'], str)
+
+        with self.assertRaises(TypeError):
             base.to_dict(dict_values)
 
         base.new_attr = "New Attribute"
         base_dict = base.to_dict()
         dict_values = base_dict.values()
 
-        self.assertTrue(base.new_attr is in dict_values)
+        self.assertTrue(base.new_attr in dict_values)
 
     def test_BaseModel_from_dict(self):
         """
@@ -112,7 +118,7 @@ class TestBase(unittest.TestCase):
 
         self.assertEqual(base.__class__.__name__, "BaseModel")
         self.assertEqual(str(base.id), instance_dict["id"])
-        self.assertEqaul(str(base.created_at), instance_dict["created_at"])
+        self.assertEqual(str(base.created_at), instance_dict["created_at"])
         self.assertEqual(str(base.updated_at), instance_dict["updated_at"])
 
 
