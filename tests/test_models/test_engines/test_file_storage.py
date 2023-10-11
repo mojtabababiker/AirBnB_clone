@@ -24,10 +24,10 @@ class TestFileStorage(unittest.TestCase):
 
         fs = FileStorage()
 
-        self.assertFalse(hasattr(fs, file_path))
-        self.assertFalse(hasattr(fs, __file_path))
-        self.assertFalse(hasattr(fs, objects))
-        self.assertFalse(hasattr(fs, __objects))
+        self.assertFalse(hasattr(fs, "file_path"))
+        self.assertFalse(hasattr(fs, "__file_path"))
+        self.assertFalse(hasattr(fs, "objects"))
+        self.assertFalse(hasattr(fs, "__objects"))
 
     def test_wrong_init_and_calls(self):
         """
@@ -36,7 +36,7 @@ class TestFileStorage(unittest.TestCase):
         """
 
         with self.assertRaises(TypeError):
-            fs = FileStorge(12, "a", (1, 2, 3))
+            fs = FileStorage(12, "a", (1, 2, 3))
 
         fs = FileStorage()
         with self.assertRaises(TypeError):
@@ -44,7 +44,7 @@ class TestFileStorage(unittest.TestCase):
         with self.assertRaises(TypeError):
             fs.new()
 
-        with self.assertRaises(AttributeError)):
+        with self.assertRaises(AttributeError):
             fs.new(12)
 
         with self.assertRaises(TypeError):
@@ -67,7 +67,7 @@ class TestFileStorage(unittest.TestCase):
         __base = MagicMock()
         __base.to_dict.return_value = __base_dict
 
-        __fs = Filestorage()
+        __fs = FileStorage()
         __objects = __fs.all()
 
         self.assertTrue(len(__objects) == 0)
@@ -76,9 +76,10 @@ class TestFileStorage(unittest.TestCase):
         __objects2 = __fs.all()
 
         self.assertTrue(len(__objects2) == 1)
-        self.assertTrue(f"BaseModel.{__base.id}" in __objects2.keys())
+        self.assertTrue(f"{__base_dict['__class__']}.{__base_dict['id']}"
+                        in __objects2.keys())
 
-        __obj = __objects2[f"BaseModel.{__base.id}"]
+        __obj = __objects2[f"{__base_dict['__class__']}.{__base_dict['id']}"]
         self.assertEqual(__obj["__class__"], "BaseModel")
         self.assertEqual(__obj["created_at"], __base_dict["created_at"])
         self.assertEqual(__obj["updated_at"], __base_dict["updated_at"])
@@ -98,10 +99,11 @@ class TestFileStorage(unittest.TestCase):
             }
         __base = MagicMock()
         __base.to_dict.return_value = __base_dict
-        with sefl.assertRiases(FileNotFoundError):
+        with self.assertRaises(FileNotFoundError):
             open(__file)
         self.assertFalse(os.path.exists(__file))
 
+        __fs = FileStorage()
         __fs.new(__base)
         __fs.save()
 
