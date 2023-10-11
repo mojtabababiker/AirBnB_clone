@@ -18,6 +18,7 @@ How to run it:
 
 import cmd
 import sys
+from models.base_model import BaseModel
 
 
 class HBNBCommand(cmd.Cmd):
@@ -32,11 +33,46 @@ class HBNBCommand(cmd.Cmd):
     """
 
     prompt = "(hbnb) "
+    __interactive = True
+
+    def preloop(self):
+        """
+        Check if the session is interactive session or non interactive
+        """
+        HBNBCommand.__interactive = sys.stdin.isatty()
+
+    def do_help(self, line):
+        """
+        Overrides the Cmd.do_help function to add some line before and
+        after printing the help strings
+        """
+        __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
+                    'quit', 'show', 'update']
+        if not HBNBCommand.__interactive:
+            print()
+        if len(line) > 0:
+            super().do_help(line)
+
+        else:
+            print()
+            print("Documented commands (type help <topic>):")
+            print("========================================")
+            for i in range(len(__docfun) - 1):
+                print(__docfun[i], end='  ')
+                if not HBNBCommand.__interactive:
+                    print(__docfun[-1])
+
+                else:
+                    print(__docfun[-1])
+                    print()
 
     def do_quit(self, *args):
         """
         Exit the interpeter immediately, no wait for the calling processes
         """
+        if not HBNBCommand.__interactive:
+            print()
+
         return True
 
     def do_EOF(self, *args):
@@ -50,6 +86,9 @@ class HBNBCommand(cmd.Cmd):
         """
         Handle the empty line
         """
+        if not HBNBCommand.__interactive:
+            print()
+
         pass
 
     def get_args(self, line):
@@ -59,10 +98,10 @@ class HBNBCommand(cmd.Cmd):
         in this case we will handel the double qouted text, beside
         extracting args from line
         """
-        qouted_args = line.split('"') # search for qouted arguments
-        args = qouted_args[0].split() # split the rest of the args by space
-        if len(qouted_args) > 1: # if there are qouted args
-            args.append(qouted_args[1]) # append them to args list
+        qouted_args = line.split('"')  # search for qouted arguments
+        args = qouted_args[0].split()  # split the rest of the args by space
+        if len(qouted_args) > 1:  # if there are qouted args
+            args.append(qouted_args[1])  # append them to args list
         return (args)
 
     def validate(self, args, args_num):
@@ -79,20 +118,20 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
         args_num -= 1
-        #if args[0] not in classes_list and args_num > 0:
+        # if args[0] not in classes_list and args_num > 0:
         #    print("** class doesn't exist **")
         #    return False
-        #args_num -= 1
+        # args_num -= 1
 
         # check the instance id
         if len(args) < 2 and args_num > 0:
             print("** instance id missing **")
             return False
         args_num -= 1
-        #if not is_instance(args[1]) and args_num > 0:
+        # if not is_instance(args[1]) and args_num > 0:
         #    print("** no instance found **")
         #    return False
-        #args_num -= 1
+        # args_num -= 1
 
         # check the atrribute name
         if len(args) < 3 and args_num > 0:
@@ -108,9 +147,9 @@ class HBNBCommand(cmd.Cmd):
 
         return True
 
-    #-----------Services Methods------------
+    # -----------Services Methods------------
 
-    def do_create(self,line):
+    def do_create(self, line):
         """
         create    create a new modle instance
 
@@ -121,7 +160,9 @@ class HBNBCommand(cmd.Cmd):
             `create` creates a new instance of the model `model_name`,
              the `model_name` should be a valide class name.
         """
-        print(type(line))
+        if not HBNBCommand.__interactive:
+            print()
+
         args = self.get_args(line)
         if not self.validate(args, 1):
             return False
@@ -140,7 +181,9 @@ class HBNBCommand(cmd.Cmd):
              The <model_name> should be a valide class name, and the
              <instance_id> should be a valide instance ID.
         """
-        print(type(line))
+        if not HBNBCommand.__interactive:
+            print()
+
         args = self.get_args(line)
         if not self.validate(args, 2):
             return False
@@ -159,6 +202,9 @@ class HBNBCommand(cmd.Cmd):
              The <model_name> should be a valide class name, and the
              <instance_id> should be a valide instance ID.
         """
+        if not HBNBCommand.__interactive:
+            print()
+
         args = self.get_args(line)
         if not self.validate(args, 2):
             return False
@@ -177,6 +223,9 @@ class HBNBCommand(cmd.Cmd):
              valide class name then `all` will prints only
              the [model_name] instances information.
         """
+        if not HBNBCommand.__interactive:
+            print()
+
         args = self.get_args(line)
         if len(args) >= 1:
             if not self.validate(args, 1):
@@ -199,6 +248,9 @@ class HBNBCommand(cmd.Cmd):
              attribute <attr> with the <value> value.
              Both the <model_name> and <instance_id> should be valide.
         """
+        if not HBNBCommand.__interactive:
+            print()
+
         args = self.get_args(line)
         if not self.validate(args, 4):
             return False
@@ -206,7 +258,4 @@ class HBNBCommand(cmd.Cmd):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        HBNBCommand().onecmd(' '.join(sys.argv[1:]))
-    else:
-        HBNBCommand().cmdloop()
+    HBNBCommand().cmdloop()
