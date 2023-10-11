@@ -34,6 +34,9 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
     __interactive = True
+    __classes = {
+        "BaseModel": BaseModel
+        }
 
     def preloop(self):
         """
@@ -118,10 +121,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
         args_num -= 1
-        # if args[0] not in classes_list and args_num > 0:
-        #    print("** class doesn't exist **")
-        #    return False
-        # args_num -= 1
+        if args[0] not in HBNBCommand.__classes.keys() and args_num > 0:
+            print("** class doesn't exist **")
+            return False
+        args_num -= 1
 
         # check the instance id
         if len(args) < 2 and args_num > 0:
@@ -166,7 +169,10 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 1):
             return False
-        print(args)
+        __new = HBNBCommand.__classes[args[0]]()
+        # TODO:
+        #     save it to json file
+        print(__new.id)
 
     def do_show(self, line):
         """
