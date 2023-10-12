@@ -6,6 +6,7 @@ unittest module
 
 import unittest
 from unittest.mock import patch, MagicMock
+import os
 import os.path
 
 from models.engine.file_storage import FileStorage
@@ -16,6 +17,15 @@ class TestFileStorage(unittest.TestCase):
     Test the creation of the class instance, and the opration of all its
     methods
     """
+
+    @classmethod
+    def tearDownClass(cls):
+        """
+        A cleaning method to remove the json file after the test is finshed
+        """
+        json_file = "models/engine/file.json"
+        if os.path.exists(json_file):
+            os.remove(json_file)
 
     def test_private_attrs(self):
         """

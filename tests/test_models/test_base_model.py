@@ -8,6 +8,7 @@ from unittest.mock import patch, MagicMock
 from models.base_model import BaseModel
 from models.base_model import uuid4
 from models.base_model import datetime
+from models.base_model import storage
 
 
 class TestBase(unittest.TestCase):
@@ -44,13 +45,14 @@ class TestBase(unittest.TestCase):
         Test the base.created_at and updated_at attributes creations
         """
 
-        # date = MagicMock()
-        date_form = "2023-10-11 03:30:45.164253"
-        mocked_today.today.return_value = date_form
-        # date.isoformat.return_value = date_form
-        base = BaseModel()
-        self.assertEqual(base.created_at, date_form)
-        self.assertEqual(base.updated_at, date_form)
+        with patch("models.base_model.storage") as mocked_storage:
+            # date = MagicMock()
+            date_form = "2023-10-11 03:30:45.164253"
+            mocked_today.today.return_value = date_form
+            # date.isoformat.return_value = date_form
+            base = BaseModel()
+            self.assertEqual(base.created_at, date_form)
+            self.assertEqual(base.updated_at, date_form)
 
     def test_str(self):
         """
@@ -67,20 +69,22 @@ class TestBase(unittest.TestCase):
         Test the BaseModel.save(self) method
         """
         # date = MagicMock()
+        with patch("models.base_model.storage") as mocked_storage:
 
-        date_form = "2023-10-11 03:43:25.164253"
-        mocked_today.today.return_value = date_form
-        # date.isoformat.return_value = date_form
-        base = BaseModel()
-        date_form = "2023-10-11 03:46:45.164253"
-        mocked_today.today.return_value = date_form
-        # date.isoformat.return_value = date_form
-        base.save()
-        self.assertEqual(base.updated_at, date_form)
-        self.assertNotEqual(base.updated_at, base.created_at)
+            mocked_storage.new.return_value = None
+            date_form = "2023-10-11 03:43:25.164253"
+            mocked_today.today.return_value = date_form
+            # date.isoformat.return_value = date_form
+            base = BaseModel()
+            date_form = "2023-10-11 03:46:45.164253"
+            mocked_today.today.return_value = date_form
+            # date.isoformat.return_value = date_form
+            base.save()
+            self.assertEqual(base.updated_at, date_form)
+            self.assertNotEqual(base.updated_at, base.created_at)
 
-        with self.assertRaises(TypeError):
-            base.save("extra args")
+            with self.assertRaises(TypeError):
+                base.save("extra args")
 
     def test_base_to_dict(self):
         """
@@ -131,6 +135,31 @@ class TestBase(unittest.TestCase):
 
         self.assertIsInstance(base.created_at, datetime)
         self.assertIsInstance(base.updated_at, datetime)
+
+    @patch("models.base_model.storage")
+    def test_BaseModel_storage_new(self, mocked_storage):
+        """
+        Test the storage.new(obj) called by value
+        """
+
+        base = BaseModel()
+        mocked_storage.new.assert_called_with(base)
+
+    @patch("models.base_model.storage")
+    def test_BaseModel_storage_save(self, mocked_storage):
+        """
+        Test the storage.save() calling
+        """
+        instance_dict = {
+            "__class__": "BaseModel",
+            "id": "1234-753223-18932",
+            "created_at": "2023-10-11T05:03:54.743342",
+            "updated_at": "2023-10-21T05:03:54.743342"
+            }
+        base = BaseModel(**instance_dict)
+        base.save()
+        
+        self.assertTrue(mocked_storage.save.called)
 
 
 if __name__ == "__main__":

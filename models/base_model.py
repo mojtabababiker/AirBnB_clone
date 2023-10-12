@@ -6,6 +6,7 @@ BaseModle(self, *args, **kwargs)
 
 from uuid import uuid4
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
@@ -28,6 +29,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.today()
             self.updated_at = datetime.today()
+            storage.new(self) #  TODO: Test Me
 
     def __str__(self):
         """Prints: [<class name>] (<self.id>) <self.__dict__>"""
@@ -37,6 +39,7 @@ class BaseModel:
     def save(self):
         """Updates updated_at attribute with the current datetime"""
         self.updated_at = datetime.today()
+        storage.save() #  TODO: Test Me
 
     def to_dict(self):
         """Returns a dictionary containing pairs of __dict__ of the instance"""
