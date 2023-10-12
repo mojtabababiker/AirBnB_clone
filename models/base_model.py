@@ -1,6 +1,9 @@
 #!/usr/bin/python3
-""""""
-import models
+"""
+base_model is the containing the base class for all the BnB models objects
+BaseModle(self, *args, **kwargs)
+"""
+
 from uuid import uuid4
 from datetime import datetime
 
@@ -14,9 +17,6 @@ class BaseModel:
             *args: won't be used.
             **kwargs (dict): dictonary  of attributes.
         """
-        self.id = str(uuid4())
-        self.created_at = datetime.today()
-        self.updated_at = datetime.today()
         str_form = "%Y-%m-%dT%H:%M:%S.%f"
         if len(kwargs) != 0:
             for key, value in kwargs.items():
@@ -24,6 +24,10 @@ class BaseModel:
                     self.__dict__[key] = datetime.strptime(value, str_form)
                 else:
                     self.__dict__[key] = value
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.today()
+            self.updated_at = datetime.today()
 
     def __str__(self):
         """Prints: [<class name>] (<self.id>) <self.__dict__>"""
@@ -41,3 +45,7 @@ class BaseModel:
         obj_dict["created_at"] = self.created_at.isoformat()
         obj_dict["updated_at"] = self.updated_at.isoformat()
         return obj_dict
+
+
+if __name__ == "__main__":
+    base = BaseModel()
