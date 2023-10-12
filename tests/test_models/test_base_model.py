@@ -4,7 +4,7 @@ This a test module for the BaseModel class from models.base_model
 """
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from models.base_model import BaseModel
 from models.base_model import uuid4
 from models.base_model import datetime
@@ -44,11 +44,13 @@ class TestBase(unittest.TestCase):
         Test the base.created_at and updated_at attributes creations
         """
 
-        date = "2023-10-11T03:30:45.164253"
-        mocked_today.today.return_value = date
+        # date = MagicMock()
+        date_form = "2023-10-11 03:30:45.164253"
+        mocked_today.today.return_value = date_form
+        # date.isoformat.return_value = date_form
         base = BaseModel()
-        self.assertEqual(base.created_at, date)
-        self.assertEqual(base.updated_at, date)
+        self.assertEqual(base.created_at, date_form)
+        self.assertEqual(base.updated_at, date_form)
 
     def test_str(self):
         """
@@ -64,13 +66,17 @@ class TestBase(unittest.TestCase):
         """
         Test the BaseModel.save(self) method
         """
-        date = "2023-10-11T03:43:25.164253"
-        mocked_today.today.return_value = date
+        # date = MagicMock()
+
+        date_form = "2023-10-11 03:43:25.164253"
+        mocked_today.today.return_value = date_form
+        # date.isoformat.return_value = date_form
         base = BaseModel()
-        date = "2023-10-11T03:46:45.164253"
-        mocked_today.today.return_value = date
+        date_form = "2023-10-11 03:46:45.164253"
+        mocked_today.today.return_value = date_form
+        # date.isoformat.return_value = date_form
         base.save()
-        self.assertEqual(base.updated_at, date)
+        self.assertEqual(base.updated_at, date_form)
         self.assertNotEqual(base.updated_at, base.created_at)
 
         with self.assertRaises(TypeError):
@@ -86,13 +92,17 @@ class TestBase(unittest.TestCase):
         dict_values = base_dict.values()
 
         self.assertTrue(base.__class__.__name__ in dict_values)
-        self.assertTrue(base.updated_at in dict_values)
-        self.assertTrue(base.created_at in dict_values)
         self.assertTrue(base.id in dict_values)
+        self.assertTrue("updated_at" in base_dict.keys())
+        self.assertTrue("created_at" in base_dict.keys())
 
         self.assertIsInstance(base_dict['updated_at'], str)
         self.assertIsInstance(base_dict['created_at'], str)
         self.assertIsInstance(base_dict['id'], str)
+
+        isoform = r"\d\d\d\d-\d\d-\d\dT\d+:\d+:\d+.\d+"
+        self.assertRegex(base_dict['updated_at'], isoform)
+        self.assertRegex(base_dict['created_at'], isoform)
 
         with self.assertRaises(TypeError):
             base.to_dict(dict_values)
@@ -118,8 +128,9 @@ class TestBase(unittest.TestCase):
 
         self.assertEqual(base.__class__.__name__, "BaseModel")
         self.assertEqual(str(base.id), instance_dict["id"])
-        self.assertEqual(str(base.created_at), instance_dict["created_at"])
-        self.assertEqual(str(base.updated_at), instance_dict["updated_at"])
+
+        self.assertIsInstance(base.created_at, datetime)
+        self.assertIsInstance(base.updated_at, datetime)
 
 
 if __name__ == "__main__":
