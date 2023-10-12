@@ -158,7 +158,7 @@ class TestBase(unittest.TestCase):
             }
         base = BaseModel(**instance_dict)
         base.save()
-        
+
         self.assertTrue(mocked_storage.save.called)
 
 

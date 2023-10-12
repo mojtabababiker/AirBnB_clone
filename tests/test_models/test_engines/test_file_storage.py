@@ -50,7 +50,8 @@ class TestFileStorage(unittest.TestCase):
 
         fs = FileStorage()
         with self.assertRaises(TypeError):
-            fs.all(12, "abd", (123,42,12))
+            fs.all(12, "abd", (123, 42, 12))
+
         with self.assertRaises(TypeError):
             fs.new()
 
@@ -135,6 +136,7 @@ class TestFileStorage(unittest.TestCase):
 
         else:
             self.assertTrue(len(__objects) == 0)
+
 
 if __name__ == "__main__":
     unittest.main()
