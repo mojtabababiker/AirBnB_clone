@@ -19,6 +19,7 @@ How to run it:
 import cmd
 import sys
 from models.base_model import BaseModel
+from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -43,6 +44,7 @@ class HBNBCommand(cmd.Cmd):
         Check if the session is interactive session or non interactive
         """
         HBNBCommand.__interactive = sys.stdin.isatty()
+        self.BnB_objects = storage.all()
 
     def do_help(self, line):
         """
@@ -62,12 +64,12 @@ class HBNBCommand(cmd.Cmd):
             print("========================================")
             for i in range(len(__docfun) - 1):
                 print(__docfun[i], end='  ')
-                if not HBNBCommand.__interactive:
-                    print(__docfun[-1])
+            if not HBNBCommand.__interactive:
+                print(__docfun[-1])
 
-                else:
-                    print(__docfun[-1])
-                    print()
+            else:
+                print(__docfun[-1])
+                print()
 
     def do_quit(self, *args):
         """
@@ -94,6 +96,7 @@ class HBNBCommand(cmd.Cmd):
 
         pass
 
+    # -------------helper functions-----------
     def get_args(self, line):
         """
         Preprocessing the line from the interpeter before passing it
@@ -131,10 +134,11 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return False
         args_num -= 1
-        # if not is_instance(args[1]) and args_num > 0:
-        #    print("** no instance found **")
-        #    return False
-        # args_num -= 1
+
+        if '.'.join(args[:2]) not in self.BnB_objects.keys() and args_num > 0:
+            print("** no instance found **")
+            return False
+        args_num -= 1
 
         # check the atrribute name
         if len(args) < 3 and args_num > 0:
@@ -167,12 +171,12 @@ class HBNBCommand(cmd.Cmd):
             print()
 
         args = self.get_args(line)
-        if not self.validate(args, 1):
+        if not self.validate(args, 2):
             return False
         __new = HBNBCommand.__classes[args[0]]()
-        # TODO:
-        #     save it to json file
         print(__new.id)
+        storage.save()
+        self.BnB_objects = storage.all()  # update the BnB_objects instantly
 
     def do_show(self, line):
         """
@@ -191,9 +195,11 @@ class HBNBCommand(cmd.Cmd):
             print()
 
         args = self.get_args(line)
-        if not self.validate(args, 2):
+        if not self.validate(args, 4):
             return False
-        print(args)
+        instance_dict = self.BnB_objects['.'.join(args[:2])]
+        instance = HBNBCommand.__classes[args[0]](**instance_dict)
+        print(instance)
 
     def do_destroy(self, line):
         """
@@ -212,9 +218,10 @@ class HBNBCommand(cmd.Cmd):
             print()
 
         args = self.get_args(line)
-        if not self.validate(args, 2):
+        if not self.validate(args, 4):
             return False
-        print(arg)
+        del self.BnB_objects['.'.join(args[:2])]
+        # call the update of __objects
 
     def do_all(self, line):
         """
@@ -233,13 +240,32 @@ class HBNBCommand(cmd.Cmd):
             print()
 
         args = self.get_args(line)
+        instances_list = list()
+
         if len(args) >= 1:
-            if not self.validate(args, 1):
+
+            if not self.validate(args, 2):
                 return False
-            print("getting class {} instances informations".format(args[0]))
+
+            for instance_dict in self.BnB_objects.values():
+
+                _class = instance_dict["__class__"]
+
+                if _class == args[0]:
+
+                    instance = HBNBCommand.__classes[_class](**instance_dict)
+                    instances_list.append(str(instance))
+
         else:
-            print("getting all classes instance informations")
-        print(args)
+
+            for instance_dict in self.BnB_objects.values():
+
+                _class = instance_dict["__class__"]
+                instance = HBNBCommand.__classes[_class](**instance_dict)
+                instances_list.append(str(instance))
+
+        print(instances_list)
+        # print(args)
 
     def do_update(self, line):
         """
@@ -258,9 +284,17 @@ class HBNBCommand(cmd.Cmd):
             print()
 
         args = self.get_args(line)
-        if not self.validate(args, 4):
+        if not self.validate(args, 6):
             return False
-        print(args)
+        instance_dict = self.BnB_objects['.'.join(args[:2])]
+        instance = HBNBCommand.__classes[args[0]](**instance_dict)
+        attr_type = type(instance.__dict__[args[2]])
+        value = attr_type(args[3])
+        instance.__dict__[args[2]] = value
+
+        instance.save()  # Edit the BaseModel.save() to update the __objects
+        print(instance)
+        # self.BnB_objects['.'.join(args[:2])] = instance
 
 
 if __name__ == "__main__":
