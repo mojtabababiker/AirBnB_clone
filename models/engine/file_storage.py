@@ -32,13 +32,8 @@ class FileStorage:
             Deserializes the JSON file to the objects dictionery
     """
 
-    def __init__(self):
-        """
-        Consitructer for the class
-        """
-
-        self.__file_path = r"models/engine/file.json"
-        self.__objects = dict()
+    __file_path = r"models/engine/file.json"
+    __objects = dict()
 
     def all(self) -> dict:
         """
@@ -52,7 +47,7 @@ class FileStorage:
             A dictionery contains BnB models instances
         """
 
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj: object):
         """
@@ -62,10 +57,10 @@ class FileStorage:
             FileStorage.new(self, obj)
         """
 
-        obj_value = obj.to_dict()
-        obj_key = obj_value["__class__"]+"."+obj_value["id"]
+        # obj_value = obj.to_dict()
+        obj_key = obj.__class__.__name__ + '.' + obj.id
 
-        self.__objects[obj_key] = obj_value
+        FileStorage.__objects[obj_key] = obj
 
     def save(self):
         """
@@ -81,8 +76,12 @@ class FileStorage:
              it's already exist it will be over-written
         """
 
-        with open(self.__file_path, "w", encoding="utf-8") as fh:
-            json.dump(self.__objects, fh, indent=2)
+        objects_dict = dict()
+        for key, obj in FileStorage.__objects.items():
+            objects_dict[key] = obj.to_dict()
+
+        with open(FileStorage.__file_path, "w", encoding="utf-8") as fh:
+            json.dump(objects_dict, fh, indent=2)
 
     def reload(self):
         """
@@ -98,7 +97,15 @@ class FileStorage:
              dictionery will be updated with it.
         """
 
-        if os.path.exists(self.__file_path):
-            with open(self.__file_path, "r", encoding="utf-8") as fh:
-                loded_obj = json.load(fh)
-            self.__objects.update(loded_obj)
+        from models.base_model import BaseModel
+
+        __classes = {
+            "BaseModel": BaseModel
+        }
+
+        if os.path.exists(FileStorage.__file_path):
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as fh:
+                objects_dict = json.load(fh)
+            for key, obj in objects_dict.items():
+                instance = __classes[obj["__class__"]](**obj)
+                FileStorage.__objects[key] = instance

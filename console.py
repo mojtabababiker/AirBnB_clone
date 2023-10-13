@@ -18,8 +18,8 @@ How to run it:
 
 import cmd
 import sys
-from models.base_model import BaseModel
-from models import storage
+from models.base_model import storage, BaseModel
+# from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -197,8 +197,8 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 4):
             return False
-        instance_dict = self.BnB_objects['.'.join(args[:2])]
-        instance = HBNBCommand.__classes[args[0]](**instance_dict)
+        instance = self.BnB_objects['.'.join(args[:2])]
+        # instance = HBNBCommand.__classes[args[0]](**instance_dict)
         print(instance)
 
     def do_destroy(self, line):
@@ -221,6 +221,7 @@ class HBNBCommand(cmd.Cmd):
         if not self.validate(args, 4):
             return False
         del self.BnB_objects['.'.join(args[:2])]
+        storage.save()
         # call the update of __objects
 
     def do_all(self, line):
@@ -247,21 +248,21 @@ class HBNBCommand(cmd.Cmd):
             if not self.validate(args, 2):
                 return False
 
-            for instance_dict in self.BnB_objects.values():
+            for instance in self.BnB_objects.values():
 
-                _class = instance_dict["__class__"]
+                # _class = instance_dict["__class__"]
 
-                if _class == args[0]:
+                if instance.__class__.__name__ == args[0]:
 
-                    instance = HBNBCommand.__classes[_class](**instance_dict)
+                    # instance = HBNBCommand.__classes[_class](**instance_dict)
                     instances_list.append(str(instance))
 
         else:
 
-            for instance_dict in self.BnB_objects.values():
+            for instance in self.BnB_objects.values():
 
-                _class = instance_dict["__class__"]
-                instance = HBNBCommand.__classes[_class](**instance_dict)
+                # _class = instance_dict["__class__"]
+                # instance = HBNBCommand.__classes[_class](**instance_dict)
                 instances_list.append(str(instance))
 
         print(instances_list)
@@ -286,14 +287,14 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 6):
             return False
-        instance_dict = self.BnB_objects['.'.join(args[:2])]
-        instance = HBNBCommand.__classes[args[0]](**instance_dict)
+        instance = self.BnB_objects['.'.join(args[:2])]
+        # instance = HBNBCommand.__classes[args[0]](**instance_dict)
         attr_type = type(instance.__dict__[args[2]])
         value = attr_type(args[3])
         instance.__dict__[args[2]] = value
 
         instance.save()  # Edit the BaseModel.save() to update the __objects
-        print(instance)
+        # print(instance)
         # self.BnB_objects['.'.join(args[:2])] = instance
 
 
