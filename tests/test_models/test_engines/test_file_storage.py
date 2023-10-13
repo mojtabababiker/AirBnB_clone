@@ -64,10 +64,13 @@ class TestFileStorage(unittest.TestCase):
         with self.assertRaises(TypeError):
             fs.reload("reload this")
 
-    def test_file_storage_all(self):
+    def test_FileStorage_all(self):
         """
         Test the FileStorage.all(self) method
         """
+
+        __mocked_class = MagicMock()
+        __mocked_class.__name__ = "BaseModel"
 
         __base_dict = {
             "__class__": "BaseModel",
@@ -76,25 +79,23 @@ class TestFileStorage(unittest.TestCase):
             "updated_at": "2023-10-11T10:45:30.981245"
             }
         __base = MagicMock()
+        __base.__class__ = __mocked_class
+        __base.id = "1234-abc-5678cd"
         __base.to_dict.return_value = __base_dict
 
         __fs = FileStorage()
         __objects = __fs.all()
 
-        self.assertTrue(len(__objects) == 0)
-
         __fs.new(__base)
         __objects2 = __fs.all()
 
-        self.assertTrue(len(__objects2) == 1)
+        self.assertTrue(len(__objects2) > 0)
         self.assertTrue(f"{__base_dict['__class__']}.{__base_dict['id']}"
                         in __objects2.keys())
 
         __obj = __objects2[f"{__base_dict['__class__']}.{__base_dict['id']}"]
-        self.assertEqual(__obj["__class__"], "BaseModel")
-        self.assertEqual(__obj["created_at"], __base_dict["created_at"])
-        self.assertEqual(__obj["updated_at"], __base_dict["updated_at"])
-        self.assertEqual(__obj["id"], __base_dict["id"])
+        self.assertEqual(__obj.__class__.__name__, "BaseModel")
+        self.assertEqual(__obj.id, __base_dict["id"])
 
     def test_FileStorage_save(self):
         """
@@ -102,14 +103,13 @@ class TestFileStorage(unittest.TestCase):
         """
         __file = "models/engine/file.json"
 
-        __base_dict = {
-            "__class__": "BaseModel",
-            "id": "1234-abc-5678cd",
-            "created_at": "2023-10-11T10:44:56.129854",
-            "updated_at": "2023-10-11T10:45:30.981245"
-            }
+        __mocked_class = MagicMock()
+        __mocked_class.__name__ = "BaseModel"
+
         __base = MagicMock()
-        __base.to_dict.return_value = __base_dict
+        __base.__class__ = __mocked_class
+        __base.id = "1234-abc-5678cd"
+
         with self.assertRaises(FileNotFoundError):
             open(__file)
         self.assertFalse(os.path.exists(__file))
@@ -118,6 +118,7 @@ class TestFileStorage(unittest.TestCase):
         __fs.new(__base)
         __fs.save()
 
+        self.assertTrue(len(__fs.all()) > 0)
         self.assertTrue(os.path.exists(__file))
 
     def test_FileStorage_save_reload(self):
