@@ -18,8 +18,10 @@ How to run it:
 
 import cmd
 import sys
-from models.base_model import storage, BaseModel
-# from models import storage
+import re
+import json
+from models.base_model import BaseModel
+from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -42,19 +44,38 @@ class HBNBCommand(cmd.Cmd):
     def preloop(self):
         """
         Check if the session is interactive session or non interactive
+        and make a query for all the saved BnB objects
         """
+
         HBNBCommand.__interactive = sys.stdin.isatty()
         self.BnB_objects = storage.all()
 
+    def precmd(self, line):
+        """
+        Print a new line after the prompet is printed in the non-interactive
+        session (styling thing)
+        """
+
+        if not HBNBCommand.__interactive:
+            print()
+        return line
+
     def do_help(self, line):
         """
-        Overrides the Cmd.do_help function to add some line before and
-        after printing the help strings
+        help    shows all the console services, or a selcted service
+
+        Syntax:
+            help [service_name]
+
+        Descriptions:
+            `help` shows the services that the console provides, and if
+             the [service_name] is entered it print the help page of
+             this service.
+             The [servise_name] should be a valide service name
         """
         __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
                     'quit', 'show', 'update']
-        if not HBNBCommand.__interactive:
-            print()
+
         if len(line) > 0:
             super().do_help(line)
 
@@ -73,8 +94,12 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, *args):
         """
-        Exit the interpeter immediately, no wait for the calling processes
+        quit   Terminate the console and exit the program
+
+        Syntax:
+            quit
         """
+
         if not HBNBCommand.__interactive:
             print()
 
@@ -82,9 +107,19 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, *args):
         """
-        Exit the interpeter at the end of file or when pressing `^D`
+        EOF | ^D    Terminate the console and exite the program
+
+        Syntax:
+            EOF
+            ^D
+
+        Descriptions:
+            Same as the quit function, this one iis used to handel
+            the End Of File situations
         """
-        print()
+
+        if HBNBCommand.__interactive:
+            print()
         return True
 
     def emptyline(self, *args):
@@ -164,8 +199,8 @@ class HBNBCommand(cmd.Cmd):
             create <model_name>
 
         Descriptions:
-            `create` creates a new instance of the model `model_name`,
-             the `model_name` should be a valide class name.
+            `create` creates new instance of the model `model_name` and prints
+             its id, the `model_name` should be a valide class name.
         """
         if not HBNBCommand.__interactive:
             print()
@@ -180,16 +215,18 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, line):
         """
-        show    shows the informations about an instance
+        show    show informations about an instance
 
         Syntax:
             show <model_name> <instance_id>
 
         Descriptions:
             `show` prints the string representation of an instance of the
-             <model_name> class that have the id <instance_id>.
+             <model_name> class which has the id <instance_id>.
              The <model_name> should be a valide class name, and the
              <instance_id> should be a valide instance ID.
+             The string representation consist of:
+                 '[claseName] (instance_id) instance_attrs_dict'
         """
         if not HBNBCommand.__interactive:
             print()
@@ -203,13 +240,13 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, line):
         """
-        destroy    deletes an instance of a class
+        destroy    delete instance of a class
 
         Syntax:
             destroy <model_name> <instance_id>
 
         Descriptions:
-            `destroy` deletes the instance of the class <model_name> that
+            `destroy` deletes the instance of the class <model_name> which
              has the id of <instance_id>.
              The <model_name> should be a valide class name, and the
              <instance_id> should be a valide instance ID.
@@ -226,7 +263,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """
-        all    prints information about instances
+        all    print instances information
 
         Syntax:
             all [model_name]
@@ -236,6 +273,8 @@ class HBNBCommand(cmd.Cmd):
              all the models, if [model_name] was provided and it's a
              valide class name then `all` will prints only
              the [model_name] instances information.
+             The string represntations consists of:
+                 '["[className] (instance_id) instance_attrs_dict"]'
         """
         if not HBNBCommand.__interactive:
             print()
@@ -249,12 +288,7 @@ class HBNBCommand(cmd.Cmd):
                 return False
 
             for instance in self.BnB_objects.values():
-
-                # _class = instance_dict["__class__"]
-
                 if instance.__class__.__name__ == args[0]:
-
-                    # instance = HBNBCommand.__classes[_class](**instance_dict)
                     instances_list.append(str(instance))
 
         else:
@@ -270,7 +304,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, line):
         """
-        update    updates an instance attributes
+        update    update instance attributes
 
         Syntax:
             update <model_name> <instance_id> <atrr> "<value>"
@@ -279,7 +313,8 @@ class HBNBCommand(cmd.Cmd):
             `update` updates the <model_name> instance with the ID of
              <instance_id>, by adding or changing the value of the
              attribute <attr> with the <value> value.
-             Both the <model_name> and <instance_id> should be valide.
+             Both the <model_name> and <instance_id> should be valide
+             and the <attr> should be valide instance attribute.
         """
         if not HBNBCommand.__interactive:
             print()
@@ -296,6 +331,72 @@ class HBNBCommand(cmd.Cmd):
         instance.save()  # Edit the BaseModel.save() to update the __objects
         # print(instance)
         # self.BnB_objects['.'.join(args[:2])] = instance
+
+    # -------------- Advanced Services --------------
+    def default(self, line):
+        """
+        Overide the Cmd.defautl method to controle the advance services
+        syntax
+        """
+
+        _pat = r'(\w+)\.(update)\(([-"\w\s]*),? ?([-"\w\d]*),? ?([-"\w\d]*)\)'
+        pat_s = re.compile(r"(\w+)\.(show)\((.*)\)")
+        pat_d = re.compile(r"(\w+)\.(destroy)\((.*)\)")
+        pat_u = re.compile(_pat)
+        pat_u_dict = re.compile(r'(\w+)\.(update)\(([-"\w\s]*),? ?(\{.*\})')
+
+        if line.endswith(".all()"):
+            args = line.split('.')
+            return self.do_all(args[0])
+
+        elif line.endswith(".count()"):
+            args = line.split('.')
+            if not self.validate(args, 2):
+                return False
+            count = 0
+            for instance in self.BnB_objects.values():
+                if instance.__class__.__name__ == args[0]:
+                    count += 1
+            print(count)
+            return False
+
+        elif pat_s.match(line):
+            matched = pat_s.match(line)
+            _line = matched.group(1) + ' ' +  matched.group(3)
+            return self.do_show(_line)
+
+        elif pat_d.match(line):
+            matched = pat_d.match(line)
+            _line = matched.group(1) + ' ' +  matched.group(3)
+            return self.do_destroy(_line)
+
+        elif pat_u.match(line):
+            matched = pat_u.match(line)
+
+            _class = matched.group(1).strip(',')
+            _id = matched.group(3).strip(',')
+            _attr = matched.group(4).strip(',')
+            _value = matched.group(5).strip(',')
+
+            _line = _class + ' ' + _id + ' ' + _attr + ' ' + _value
+            return self.do_update(_line)
+
+        elif pat_u_dict.match(line):
+            matched = pat_u_dict.match(line)
+
+            _class = matched.group(1)
+            _id = matched.group(3)
+            _dict = json.loads(matched.group(4))
+
+            for key, val in _dict.items():
+                # print(f"{key}: {val}")
+                _line = _class + ' ' + _id + ' ' + key + ' ' + str(val)
+                print(_line)
+                # self.do_update(_line)
+            return False
+
+        else:
+            super().default(line)
 
 
 if __name__ == "__main__":
