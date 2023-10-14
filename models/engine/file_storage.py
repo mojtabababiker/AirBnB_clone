@@ -96,11 +96,17 @@ class FileStorage:
              python dictionery, and the value of the BnB objects instances
              dictionery will be updated with it.
         """
-
-        from models.base_model import BaseModel
+        from models.models import BaseModel, User, State, City
+        from models.models import Amenity, Place, Review
 
         __classes = {
-            "BaseModel": BaseModel
+            "BaseModel": BaseModel,
+            "User": User,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Place": Place,
+            "Review": Review
         }
 
         if os.path.exists(FileStorage.__file_path):
