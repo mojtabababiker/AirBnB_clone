@@ -20,8 +20,10 @@ import cmd
 import sys
 import re
 import json
-from models.base_model import BaseModel
+#from models.base_model import BaseModel
 from models import storage
+from models.models import *
+
 
 
 class HBNBCommand(cmd.Cmd):
@@ -38,8 +40,14 @@ class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "
     __interactive = True
     __classes = {
-        "BaseModel": BaseModel
-        }
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+    }
 
     def preloop(self):
         """
@@ -259,7 +267,6 @@ class HBNBCommand(cmd.Cmd):
             return False
         del self.BnB_objects['.'.join(args[:2])]
         storage.save()
-        # call the update of __objects
 
     def do_all(self, line):
         """
@@ -324,13 +331,14 @@ class HBNBCommand(cmd.Cmd):
             return False
         instance = self.BnB_objects['.'.join(args[:2])]
         # instance = HBNBCommand.__classes[args[0]](**instance_dict)
-        attr_type = type(instance.__dict__[args[2]])
+        try:
+            attr_type = type(instance.__dict__[args[2]])
+        except KeyError:
+            attr_type = type(instance.__class__.__dict__[args[2]])
         value = attr_type(args[3])
         instance.__dict__[args[2]] = value
 
-        instance.save()  # Edit the BaseModel.save() to update the __objects
-        # print(instance)
-        # self.BnB_objects['.'.join(args[:2])] = instance
+        instance.save()
 
     # -------------- Advanced Services --------------
     def default(self, line):
@@ -391,8 +399,8 @@ class HBNBCommand(cmd.Cmd):
             for key, val in _dict.items():
                 # print(f"{key}: {val}")
                 _line = _class + ' ' + _id + ' ' + key + ' ' + str(val)
-                print(_line)
-                # self.do_update(_line)
+                #rint(_line)
+                self.do_update(_line)
             return False
 
         else:
