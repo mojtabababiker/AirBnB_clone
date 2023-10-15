@@ -57,9 +57,9 @@ class FileStorage:
             FileStorage.new(self, obj)
         """
 
-        obj_key = obj.__class__.__name__ + '.' + obj.id
+        __obj_key = obj.__class__.__name__ + '.' + obj.id
 
-        FileStorage.__objects[obj_key] = obj
+        FileStorage.__objects[__obj_key] = obj
 
     def save(self):
         """
@@ -75,12 +75,12 @@ class FileStorage:
              it's already exist it will be over-written
         """
 
-        objects_dict = dict()
+        __objects_dict = dict()
         for key, obj in FileStorage.__objects.items():
-            objects_dict[key] = obj.to_dict()
+            __objects_dict[key] = obj.to_dict()
 
         with open(FileStorage.__file_path, "w", encoding="utf-8") as fh:
-            json.dump(objects_dict, fh)
+            json.dump(__objects_dict, fh)
 
     def reload(self):
         """
@@ -110,7 +110,7 @@ class FileStorage:
 
         if os.path.exists(FileStorage.__file_path):
             with open(FileStorage.__file_path, "r", encoding="utf-8") as fh:
-                objects_dict = json.load(fh)
-            for key, obj in objects_dict.items():
-                instance = __classes[obj["__class__"]](**obj)
-                FileStorage.__objects[key] = instance
+                __objects_dict = json.load(fh)
+            for key, obj in __objects_dict.items():
+                __instance = __classes[obj["__class__"]](**obj)
+                FileStorage.__objects[key] = __instance
