@@ -24,7 +24,7 @@ class TestAmenity(unittest.TestCase):
     def test_type_attribute(self):
         """tests type of class  attributes"""
         self.assertEqual(str, type(City.name))
-        self.assertEqual(str, type(City.State.id))
+        self.assertEqual(str, type(City.state_id))
 
     def test_city_stored(self):
         """ tests city instance storged in storage"""
@@ -39,7 +39,7 @@ class TestAmenity(unittest.TestCase):
         """Test city instances have attributes"""
         city = City()
         self.assertTrue(hasattr(City, "name"))
-        self.assertTrue(hasattr(City, "State.id"))
+        self.assertTrue(hasattr(City, "state_id"))
 
     def test_city_to_dict(self):
         """Test the dictionery of a city instance"""
@@ -47,12 +47,12 @@ class TestAmenity(unittest.TestCase):
         city = City()
         city.name = "Newyork"
         city.id = "122-234"
-        city.state.id = "122-23455"
+        city.state_id = "122-23455"
         city.created_at = city.updated_at = time
         city_dict = {
             'name': 'Newyork',
             'id': '122-234',
-            'state.id': '122-23455',
+            'state_id': '122-23455',
             '__class__': 'City',
             'created_at': time.isoformat(),
             'updated_at': time.isoformat()
@@ -70,7 +70,7 @@ class TestAmenity(unittest.TestCase):
         city = City()
         city.save()
         city_id = "City." + city.id
-        with open("file.json", "r") as file:
+        with open("models/engine/file.json", "r") as file:
             self.assertIn(city_id, file.read())
 
     def test_dict(self):

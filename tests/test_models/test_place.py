@@ -72,7 +72,7 @@ class TestPlace(unittest.TestCase):
         place.id = "1234-753223-18932"
         place.city_id = "1234-753223"
         place.user_id = "1234-753223-1888"
-        place.name = " Bear home"
+        place.name = "Bear home"
         place.number_rooms = 3
         place.price_by_night = 300
         place.created_at = place.updated_at = time
@@ -94,7 +94,7 @@ class TestPlace(unittest.TestCase):
         place = Place()
         place.save()
         place_id = "Place." + place.id
-        with open("file.json", "r") as file:
+        with open("models/engine/file.json", "r") as file:
             self.assertIn(place_id, file.read())
 
     def test_dict(self):
