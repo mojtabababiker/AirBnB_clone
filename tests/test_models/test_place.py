@@ -34,7 +34,7 @@ class TestPlace(unittest.TestCase):
         self.assertEqual(float, type(Place.latitude))
         self.assertEqual(float, type(Place.longitude))
         self.assertEqual(list, type(Place.amenity_ids))
-    
+
     def test_place_stored(self):
         """ tests place instance storged in storage"""
         self.assertIn(Place(), models.storage.all().values())
@@ -101,11 +101,12 @@ class TestPlace(unittest.TestCase):
         """ test dictionery of instance"""
         place = Place()
         self.assertNotEqual(place.to_dict(), place.__dict__)
-    
+
     def test_None_kwargs(self):
         """ Test passes None as kwargs"""
         with self.assertRaises(TypeError):
             Place(id=None, created_at=None, updated_at=None)
+
 
 if __name__ == "__main__":
     unittest.main()

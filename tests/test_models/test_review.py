@@ -26,7 +26,7 @@ class TestReview(unittest.TestCase):
         self.assertEqual(str, type(Review.place_id))
         self.assertEqual(str, type(Review.user_id))
         self.assertEqual(str, type(Review.text))
-    
+
     def test_user_stored(self):
         """ tests review instance storged in storage"""
         self.assertIn(Review(), models.storage.all().values())
@@ -86,6 +86,7 @@ class TestReview(unittest.TestCase):
         """ Test passes None as kwargs"""
         with self.assertRaises(TypeError):
             Review(id=None, created_at=None, updated_at=None)
+
 
 if __name__ == "__main__":
     unittest.main()

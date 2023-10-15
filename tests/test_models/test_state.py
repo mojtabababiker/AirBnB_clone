@@ -24,7 +24,7 @@ class TestState(unittest.TestCase):
     def test_type_attribute(self):
         """tests type of class  attributes"""
         self.assertEqual(str, type(State.name))
-    
+
     def test_state_stored(self):
         """ tests State instance storged in storage"""
         self.assertIn(State(), models.storage.all().values())
@@ -73,11 +73,12 @@ class TestState(unittest.TestCase):
         """ test dictionery of instance"""
         state = State()
         self.assertNotEqual(state.to_dict(), state.__dict__)
-    
+
     def test_None_kwargs(self):
         """ Test passes None as kwargs"""
         with self.assertRaises(TypeError):
             State(id=None, created_at=None, updated_at=None)
+
 
 if __name__ == "__main__":
     unittest.main()

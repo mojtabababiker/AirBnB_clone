@@ -20,10 +20,9 @@ import cmd
 import sys
 import re
 import json
-#from models.base_model import BaseModel
+# from models.base_model import BaseModel
 from models import storage
 from models.models import *
-
 
 
 class HBNBCommand(cmd.Cmd):
@@ -370,12 +369,12 @@ class HBNBCommand(cmd.Cmd):
 
         elif pat_s.match(line):
             matched = pat_s.match(line)
-            _line = matched.group(1) + ' ' +  matched.group(3)
+            _line = matched.group(1) + ' ' + matched.group(3)
             return self.do_show(_line)
 
         elif pat_d.match(line):
             matched = pat_d.match(line)
-            _line = matched.group(1) + ' ' +  matched.group(3)
+            _line = matched.group(1) + ' ' + matched.group(3)
             return self.do_destroy(_line)
 
         elif pat_u.match(line):
@@ -399,7 +398,7 @@ class HBNBCommand(cmd.Cmd):
             for key, val in _dict.items():
                 # print(f"{key}: {val}")
                 _line = _class + ' ' + _id + ' ' + key + ' ' + str(val)
-                #rint(_line)
+                # rint(_line)
                 self.do_update(_line)
             return False
 

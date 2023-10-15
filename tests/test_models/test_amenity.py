@@ -24,7 +24,7 @@ class TestAmenity(unittest.TestCase):
     def test_type_attribute(self):
         """tests type of class  attributes"""
         self.assertEqual(str, type(Amenity.name))
-    
+
     def test_amenity_stored(self):
         """ tests amenity instance storged in storage"""
         self.assertIn(Amenity(), models.storage.all().values())
@@ -78,6 +78,7 @@ class TestAmenity(unittest.TestCase):
         """ Test passes None as kwargs"""
         with self.assertRaises(TypeError):
             Amenity(id=None, created_at=None, updated_at=None)
+
 
 if __name__ == "__main__":
     unittest.main()

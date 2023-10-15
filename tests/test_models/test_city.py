@@ -83,5 +83,6 @@ class TestAmenity(unittest.TestCase):
         with self.assertRaises(TypeError):
             City(id=None, created_at=None, updated_at=None)
 
+
 if __name__ == "__main__":
     unittest.main()
