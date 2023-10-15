@@ -44,16 +44,6 @@ class HBNBCommand(cmd.Cmd):
     """
 
     prompt = "(hbnb) "
-    __interactive = True
-    __classes = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Amenity": Amenity,
-        "Place": Place,
-        "Review": Review
-    }
 
     def preloop(self):
         """
@@ -61,8 +51,17 @@ class HBNBCommand(cmd.Cmd):
         and make a query for all the saved BnB objects
         """
 
-        HBNBCommand.__interactive = sys.stdin.isatty()
+        # self.__interactive = sys.stdin.isatty()
         self.BnB_objects = storage.all()
+        self.__classes = {
+            "BaseModel": BaseModel,
+            "User": User,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Place": Place,
+            "Review": Review
+        }
 
     def do_help(self, line):
         """
@@ -80,8 +79,8 @@ class HBNBCommand(cmd.Cmd):
         __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
                     'quit', 'show', 'update']
 
-        if not HBNBCommand.__interactive:
-            print()
+        # if not self.__interactive:
+        #    print()
 
         if len(line) > 0:
             super().do_help(line)
@@ -92,7 +91,7 @@ class HBNBCommand(cmd.Cmd):
             print("========================================")
             for i in range(len(__docfun) - 1):
                 print(__docfun[i], end='  ')
-            if not HBNBCommand.__interactive:
+            if not self.__interactive:
                 print(__docfun[-1])
 
             else:
@@ -107,8 +106,8 @@ class HBNBCommand(cmd.Cmd):
             quit
         """
 
-        if not HBNBCommand.__interactive:
-            print()
+        # if not self.__interactive:
+        # print()
 
         return True
 
@@ -131,8 +130,8 @@ class HBNBCommand(cmd.Cmd):
         """
         Handle the empty line
         """
-        if not HBNBCommand.__interactive:
-            print()
+        # if not self.__interactive:
+        # print()
 
         pass
 
@@ -167,7 +166,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
         args_num -= 1
-        if args[0] not in HBNBCommand.__classes.keys() and args_num > 0:
+        if args[0] not in self.__classes.keys() and args_num > 0:
             print("** class doesn't exist **")
             return False
         args_num -= 1
@@ -210,13 +209,13 @@ class HBNBCommand(cmd.Cmd):
             `create` creates new instance of the model `model_name` and prints
              its id, the `model_name` should be a valide class name.
         """
-        # if not HBNBCommand.__interactive:
+        # if not self.__interactive:
         # print()
 
         args = self.get_args(line)
         if not self.validate(args, 2):
             return False
-        __new = HBNBCommand.__classes[args[0]]()
+        __new = self.__classes[args[0]]()
         print(__new.id)
         storage.save()
         self.BnB_objects = storage.all()  # update the BnB_objects instantly
@@ -236,14 +235,14 @@ class HBNBCommand(cmd.Cmd):
              The string representation consist of:
                  '[claseName] (instance_id) instance_attrs_dict'
         """
-        # if not HBNBCommand.__interactive:
+        # if not self.__interactive:
         # print()
 
         args = self.get_args(line)
         if not self.validate(args, 4):
             return False
         instance = self.BnB_objects['.'.join(args[:2])]
-        # instance = HBNBCommand.__classes[args[0]](**instance_dict)
+        # instance = self.__classes[args[0]](**instance_dict)
         print(instance)
 
     def do_destroy(self, line):
@@ -259,7 +258,7 @@ class HBNBCommand(cmd.Cmd):
              The <model_name> should be a valide class name, and the
              <instance_id> should be a valide instance ID.
         """
-        # if not HBNBCommand.__interactive:
+        # if not self.__interactive:
         # print()
 
         args = self.get_args(line)
@@ -283,7 +282,7 @@ class HBNBCommand(cmd.Cmd):
              The string represntations consists of:
                  '["[className] (instance_id) instance_attrs_dict"]'
         """
-        # if not HBNBCommand.__interactive:
+        # if not self.__interactive:
         # print()
 
         args = self.get_args(line)
@@ -319,7 +318,7 @@ class HBNBCommand(cmd.Cmd):
              Both the <model_name> and <instance_id> should be valide
              and the <attr> should be valide instance attribute.
         """
-        # if not HBNBCommand.__interactive:
+        # if not self.__interactive:
         # print()
 
         args = self.get_args(line)
@@ -327,15 +326,23 @@ class HBNBCommand(cmd.Cmd):
             return False
         instance = self.BnB_objects['.'.join(args[:2])]
 
+        if '"' in args[3]:
+            args[3] = args[3].replace('"', '')  # remove the quot from it
+
+        arrt_type = str
         try:
             attr_type = type(instance.__dict__[args[2]])
         except KeyError:
             try:
                 attr_type = type(instance.__class__.__dict__[args[2]])
             except KeyError:
-                arrt_type = str
+                pass
 
-        value = attr_type(args[3])
+        try:
+            value = attr_type(args[3])
+        except ValueError:
+            value = args[3]
+
         setattr(instance, args[2], value)
         # instance.__dict__[args[2]] = value
 
@@ -405,8 +412,8 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         else:
-            if not HBNBCommand.__interactive:
-                print()
+            # if not self.__interactive:
+            # print()
             super().default(line)
 
 
