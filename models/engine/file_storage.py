@@ -57,7 +57,6 @@ class FileStorage:
             FileStorage.new(self, obj)
         """
 
-        # obj_value = obj.to_dict()
         obj_key = obj.__class__.__name__ + '.' + obj.id
 
         FileStorage.__objects[obj_key] = obj

@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 """
 console model is the code entry point for the AirBnB console project
 the console or the command line interpeter was build on the cmd.CMD
@@ -97,7 +98,7 @@ class HBNBCommand(cmd.Cmd):
                 print(__docfun[-1])
                 print()
 
-    def do_quit(self, *args):
+    def do_quit(self, line):
         """
         quit   Terminate the console and exit the program
 
@@ -329,7 +330,11 @@ class HBNBCommand(cmd.Cmd):
         try:
             attr_type = type(instance.__dict__[args[2]])
         except KeyError:
-            attr_type = type(instance.__class__.__dict__[args[2]])
+            try:
+                attr_type = type(instance.__class__.__dict__[args[2]])
+            except KeyError:
+                arrt_type = str
+
         value = attr_type(args[3])
         instance.__dict__[args[2]] = value
 
