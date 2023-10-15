@@ -80,7 +80,7 @@ class TestUser(unittest.TestCase):
         user = User()
         user.save()
         user_id = "User." + user.id
-        with open(r"models/engine/file.json", "r") as file:
+        with open(r"file.json", "r") as file:
             self.assertIn(user_id, file.read())
 
     def test_dict(self):

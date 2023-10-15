@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 A Storage Engine based on file storage mechanisim and the JSON format.
 This model is used to create a presistent copy of all the BnB models objects
@@ -32,7 +32,7 @@ class FileStorage:
             Deserializes the JSON file to the objects dictionery
     """
 
-    __file_path = r"models/engine/file.json"
+    __file_path = r"file.json"
     __objects = dict()
 
     def all(self) -> dict:

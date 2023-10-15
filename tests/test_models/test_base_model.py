@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 This a test module for the BaseModel class from models.base_model
 """

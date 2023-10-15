@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 """
 Test module for State Class
@@ -66,7 +67,8 @@ class TestState(unittest.TestCase):
         state = State()
         state.save()
         state_id = "State." + state.id
-        with open("models/engine/file.json", "r") as file:
+
+        with open(r"file.json", "r") as file:
             self.assertIn(state_id, file.read())
 
     def test_dict(self):

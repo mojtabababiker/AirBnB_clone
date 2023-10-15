@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Test model for the file_storage model unit testing, py the use of the python
 unittest module
@@ -108,7 +108,7 @@ class TestFileStorage(unittest.TestCase):
         """
         Test the FileStorage.save(self) method
         """
-        __file = "models/engine/file.json"
+        __file = "file.json"
 
         __mocked_class = MagicMock()
         __mocked_class.__name__ = "BaseModel"
@@ -139,7 +139,7 @@ class TestFileStorage(unittest.TestCase):
         """
         Test the FileStorage.reload(self) method
         """
-        __file = "models/engine/file.json"
+        __file = "file.json"
         if os.path.exists(__file):
             os.remove(__file)
 

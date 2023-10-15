@@ -66,7 +66,7 @@ class TestAmenity(unittest.TestCase):
         amenity = Amenity()
         amenity.save()
         amenity_id = "Amenity." + amenity.id
-        with open("models/engine/file.json", "r") as file:
+        with open(r"file.json", "r") as file:
             self.assertIn(amenity_id, file.read())
 
     def test_dict(self):

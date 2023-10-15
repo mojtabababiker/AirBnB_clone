@@ -94,7 +94,8 @@ class TestPlace(unittest.TestCase):
         place = Place()
         place.save()
         place_id = "Place." + place.id
-        with open("models/engine/file.json", "r") as file:
+
+        with open(r"file.json", "r") as file:
             self.assertIn(place_id, file.read())
 
     def test_dict(self):

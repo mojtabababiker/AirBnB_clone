@@ -74,7 +74,8 @@ class TestReview(unittest.TestCase):
         review = Review()
         review.save()
         review_id = "Review." + review.id
-        with open("models/engine/file.json", "r") as file:
+
+        with open(r"file.json", "r") as file:
             self.assertIn(review_id, file.read())
 
     def test_dict(self):

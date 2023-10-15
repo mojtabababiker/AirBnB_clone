@@ -70,7 +70,8 @@ class TestAmenity(unittest.TestCase):
         city = City()
         city.save()
         city_id = "City." + city.id
-        with open("models/engine/file.json", "r") as file:
+
+        with open(r"file.json", "r") as file:
             self.assertIn(city_id, file.read())
 
     def test_dict(self):

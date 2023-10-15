@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 console model is the code entry point for the AirBnB console project
 the console or the command line interpeter was build on the cmd.CMD
