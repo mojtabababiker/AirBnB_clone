@@ -20,7 +20,6 @@ import cmd
 import sys
 import re
 import json
-# from models.base_model import BaseModel
 from models import storage
 from models.models import *
 
@@ -57,16 +56,6 @@ class HBNBCommand(cmd.Cmd):
         HBNBCommand.__interactive = sys.stdin.isatty()
         self.BnB_objects = storage.all()
 
-    def precmd(self, line):
-        """
-        Print a new line after the prompet is printed in the non-interactive
-        session (styling thing)
-        """
-
-        if not HBNBCommand.__interactive:
-            print()
-        return line
-
     def do_help(self, line):
         """
         help    shows all the console services, or a selcted service
@@ -82,6 +71,9 @@ class HBNBCommand(cmd.Cmd):
         """
         __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
                     'quit', 'show', 'update']
+
+        if not HBNBCommand.__interactive:
+            print()
 
         if len(line) > 0:
             super().do_help(line)
@@ -124,9 +116,7 @@ class HBNBCommand(cmd.Cmd):
             Same as the quit function, this one iis used to handel
             the End Of File situations
         """
-
-        if HBNBCommand.__interactive:
-            print()
+        print()
         return True
 
     def emptyline(self, *args):
@@ -403,6 +393,8 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         else:
+            if not HBNBCommand.__interactive:
+                print()
             super().default(line)
 
 
