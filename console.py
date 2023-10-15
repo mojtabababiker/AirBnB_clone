@@ -18,6 +18,7 @@ How to run it:
 """
 
 import cmd
+import shlex
 import sys
 import re
 import json
@@ -143,10 +144,13 @@ class HBNBCommand(cmd.Cmd):
         in this case we will handel the double qouted text, beside
         extracting args from line
         """
+        """
         qouted_args = line.split('"')  # search for qouted arguments
         args = qouted_args[0].split()  # split the rest of the args by space
         if len(qouted_args) > 1:  # if there are qouted args
             args.append(qouted_args[1])  # append them to args list
+        """
+        args = shlex.split(line)
         return (args)
 
     def validate(self, args, args_num):
@@ -206,8 +210,8 @@ class HBNBCommand(cmd.Cmd):
             `create` creates new instance of the model `model_name` and prints
              its id, the `model_name` should be a valide class name.
         """
-        if not HBNBCommand.__interactive:
-            print()
+        # if not HBNBCommand.__interactive:
+        # print()
 
         args = self.get_args(line)
         if not self.validate(args, 2):
@@ -232,8 +236,8 @@ class HBNBCommand(cmd.Cmd):
              The string representation consist of:
                  '[claseName] (instance_id) instance_attrs_dict'
         """
-        if not HBNBCommand.__interactive:
-            print()
+        # if not HBNBCommand.__interactive:
+        # print()
 
         args = self.get_args(line)
         if not self.validate(args, 4):
@@ -255,8 +259,8 @@ class HBNBCommand(cmd.Cmd):
              The <model_name> should be a valide class name, and the
              <instance_id> should be a valide instance ID.
         """
-        if not HBNBCommand.__interactive:
-            print()
+        # if not HBNBCommand.__interactive:
+        # print()
 
         args = self.get_args(line)
         if not self.validate(args, 4):
@@ -279,8 +283,8 @@ class HBNBCommand(cmd.Cmd):
              The string represntations consists of:
                  '["[className] (instance_id) instance_attrs_dict"]'
         """
-        if not HBNBCommand.__interactive:
-            print()
+        # if not HBNBCommand.__interactive:
+        # print()
 
         args = self.get_args(line)
         instances_list = list()
@@ -297,13 +301,9 @@ class HBNBCommand(cmd.Cmd):
         else:
 
             for instance in self.BnB_objects.values():
-
-                # _class = instance_dict["__class__"]
-                # instance = HBNBCommand.__classes[_class](**instance_dict)
                 instances_list.append(str(instance))
 
         print(instances_list)
-        # print(args)
 
     def do_update(self, line):
         """
@@ -319,14 +319,14 @@ class HBNBCommand(cmd.Cmd):
              Both the <model_name> and <instance_id> should be valide
              and the <attr> should be valide instance attribute.
         """
-        if not HBNBCommand.__interactive:
-            print()
+        # if not HBNBCommand.__interactive:
+        # print()
 
         args = self.get_args(line)
         if not self.validate(args, 6):
             return False
         instance = self.BnB_objects['.'.join(args[:2])]
-        # instance = HBNBCommand.__classes[args[0]](**instance_dict)
+
         try:
             attr_type = type(instance.__dict__[args[2]])
         except KeyError:
@@ -336,7 +336,8 @@ class HBNBCommand(cmd.Cmd):
                 arrt_type = str
 
         value = attr_type(args[3])
-        instance.__dict__[args[2]] = value
+        setattr(instance, args[2], value)
+        # instance.__dict__[args[2]] = value
 
         instance.save()
 
@@ -394,13 +395,13 @@ class HBNBCommand(cmd.Cmd):
 
             _class = matched.group(1)
             _id = matched.group(3)
-            _dict = json.loads(matched.group(4))
+            _json_dict = matched.group(4).replace("'", "\"")
+            _dict = json.loads(_json_dict)
 
             for key, val in _dict.items():
-                # print(f"{key}: {val}")
                 _line = _class + ' ' + _id + ' ' + key + ' ' + str(val)
-                # rint(_line)
                 self.do_update(_line)
+
             return False
 
         else:
