@@ -28,6 +28,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(str, type(User.password))
         self.assertEqual(str, type(User.first_name))
         self.assertEqual(str, type(User.last_name))
+
     def test_user_stored(self):
         """ tests user instance storged in storage"""
         self.assertIn(User(), models.storage.all().values())
@@ -59,7 +60,7 @@ class TestUser(unittest.TestCase):
         user.email = "jisook@gmail.com"
         user.password = "105A$55"
         user.first_name = "jisook"
-        user.last_name: "kang"
+        user.last_name = "kang"
         user.created_at = user.updated_at = time
         user_dict = {
             'email': 'jisook@gmail.com',
@@ -71,6 +72,7 @@ class TestUser(unittest.TestCase):
             'created_at': time.isoformat(),
             'updated_at': time.isoformat()
         }
+
         self.assertDictEqual(user.to_dict(), user_dict)
 
     def test_file_update(self):
@@ -78,13 +80,14 @@ class TestUser(unittest.TestCase):
         user = User()
         user.save()
         user_id = "User." + user.id
-        with open("file.json", "r") as file:
+        with open(r"models/engine/file.json", "r") as file:
             self.assertIn(user_id, file.read())
 
     def test_dict(self):
         """ test dictionery of instance"""
         user = User()
         self.assertNotEqual(user.to_dict(), user.__dict__)
+
 
 if __name__ == "__main__":
     unittest.main()
