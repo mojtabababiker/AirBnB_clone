@@ -326,9 +326,13 @@ class HBNBCommand(cmd.Cmd):
             return False
         instance = self.BnB_objects['.'.join(args[:2])]
 
-        if '"' in args[3]:
-            args[3] = args[3].replace('"', '')  # remove the quot from it
+        value = args[3]
+        if '.' in value:
+            value_type = float
+        else:
+            value_type = int
 
+        """
         arrt_type = str
         try:
             attr_type = type(instance.__dict__[args[2]])
@@ -342,6 +346,11 @@ class HBNBCommand(cmd.Cmd):
             value = attr_type(args[3])
         except ValueError:
             value = args[3]
+        """
+        try:
+            value = value_type(value)
+        except ValueError:
+            pass
 
         setattr(instance, args[2], value)
         # instance.__dict__[args[2]] = value
