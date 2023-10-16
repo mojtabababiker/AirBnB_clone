@@ -44,15 +44,8 @@ class HBNBCommand(cmd.Cmd):
     """
 
     prompt = "(hbnb) "
-
-    def preloop(self):
-        """
-        Check if the session is interactive session or non interactive
-        and make a query for all the saved BnB objects
-        """
-
-        self.BnB_objects = storage.all()
-        self.__classes = {
+    BnB_objects = storage.all()
+    __classes = {
             "BaseModel": BaseModel,
             "User": User,
             "State": State,
@@ -61,6 +54,13 @@ class HBNBCommand(cmd.Cmd):
             "Place": Place,
             "Review": Review
         }
+
+    def preloop(self):
+        """
+        Check if the session is interactive session or non interactive
+        and make a query for all the saved BnB objects
+        """
+        pass
 
     def do_help(self, line):
         """
@@ -142,7 +142,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
         args_num -= 1
-        if args[0] not in self.__classes.keys() and args_num > 0:
+        if args[0] not in HBNBCommand.__classes.keys() and args_num > 0:
             print("** class doesn't exist **")
             return False
         args_num -= 1
@@ -153,7 +153,7 @@ class HBNBCommand(cmd.Cmd):
             return False
         args_num -= 1
 
-        if '.'.join(args[:2]) not in self.BnB_objects.keys() and args_num > 0:
+        if '.'.join(args[:2]) not in HBNBCommand.BnB_objects.keys() and args_num > 0:
             print("** no instance found **")
             return False
         args_num -= 1
@@ -188,10 +188,10 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 2):
             return False
-        __new = self.__classes[args[0]]()
+        __new = HBNBCommand.__classes[args[0]]()
         print(__new.id)
         storage.save()
-        self.BnB_objects = storage.all()  # update the BnB_objects instantly
+        HBNBCommand.BnB_objects = storage.all()  # update the BnB_objects instantly
 
     def do_show(self, line):
         """
@@ -211,8 +211,8 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 4):
             return False
-        instance = self.BnB_objects['.'.join(args[:2])]
-        # instance = self.__classes[args[0]](**instance_dict)
+        instance = HBNBCommand.BnB_objects['.'.join(args[:2])]
+        # instance = HBNBCommand.__classes[args[0]](**instance_dict)
         print(instance)
 
     def do_destroy(self, line):
@@ -231,7 +231,7 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 4):
             return False
-        del self.BnB_objects['.'.join(args[:2])]
+        del HBNBCommand.BnB_objects['.'.join(args[:2])]
         storage.save()
 
     def do_all(self, line):
@@ -257,12 +257,12 @@ class HBNBCommand(cmd.Cmd):
             if not self.validate(args, 2):
                 return False
 
-            for instance in self.BnB_objects.values():
+            for instance in HBNBCommand.BnB_objects.values():
                 if instance.__class__.__name__ == args[0]:
                     instances_list.append(str(instance))
 
         else:
-            for instance in self.BnB_objects.values():
+            for instance in HBNBCommand.BnB_objects.values():
                 instances_list.append(str(instance))
 
         print(instances_list)
@@ -284,7 +284,7 @@ class HBNBCommand(cmd.Cmd):
         args = self.get_args(line)
         if not self.validate(args, 6):
             return False
-        instance = self.BnB_objects['.'.join(args[:2])]
+        instance = HBNBCommand.BnB_objects['.'.join(args[:2])]
 
         value = args[3]
         if '.' in value:
@@ -322,7 +322,7 @@ class HBNBCommand(cmd.Cmd):
             if not self.validate(args, 2):
                 return False
             count = 0
-            for instance in self.BnB_objects.values():
+            for instance in HBNBCommand.BnB_objects.values():
                 if instance.__class__.__name__ == args[0]:
                     count += 1
             print(count)
