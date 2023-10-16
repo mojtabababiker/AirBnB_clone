@@ -82,6 +82,21 @@ class TestFileStorage(unittest.TestCase):
         with self.assertRaises(TypeError):
             fs.reload("reload this")
 
+    def test_FileStorage_objects(self):
+        """
+        Test the FileStorage.__objects type
+        """
+        fs = FileStorage()
+        __objects = fs.all()
+        self.assertIsInstance(__objects, dict)
+        del fs
+
+    def test_empty_path(self):
+        """
+        Test the empty path of the __path
+        """
+        pass
+
     def test_FileStorage_allz(self):
         """
         Test the FileStorage.all(self) method
@@ -105,14 +120,11 @@ class TestFileStorage(unittest.TestCase):
         __fs = FileStorage()
         __objects = __fs.all()
 
-        # self.assertTrue(len(__objects) == 0)
-        self.assertIsInstance(__objects, dict)
-
         __fs.new(__base)
         __objects2 = __fs.all()
 
         self.assertTrue(len(__objects2) > 0)
-        self.assertIsInstance(__objects2, dict)
+
         self.assertTrue(f"{__base_dict['__class__']}.{__base_dict['id']}"
                         in __objects2.keys())
 
