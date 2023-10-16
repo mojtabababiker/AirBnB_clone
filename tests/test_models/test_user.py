@@ -13,7 +13,7 @@ class TestUser(unittest.TestCase):
     """Class for testing instantiation of the User class."""
 
     def test_doc(self):
-        """... documentation for the class"""
+        """test the documentation for the class"""
         doc = User.__doc__
         self.assertIsNotNone(doc)
 

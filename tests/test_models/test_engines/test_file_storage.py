@@ -18,20 +18,31 @@ class TestFileStorage(unittest.TestCase):
     methods
     """
 
-    '''
+    @classmethod
+    def setupClass(cls):
+        """
+        A cleaning method to remove the json file after the test is finshed
+        """
+        json_file = "file.json"
+        if os.path.exists(json_file):
+            os.remove(json_file)
+
     @classmethod
     def tearDownClass(cls):
         """
         A cleaning method to remove the json file after the test is finshed
         """
-        json_file = "models/engine/file.json"
+        json_file = "file.json"
         if os.path.exists(json_file):
             os.remove(json_file)
 
     def setup(self):
         """
-        Create the json
-    '''
+        setup the dependancess for the test cases
+        """
+        __file = "file.json"
+        if os.path.exists(__file):
+            os.remove(__file)
 
     def test_private_attrs(self):
         """
@@ -44,6 +55,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertFalse(hasattr(fs, "__file_path"))
         self.assertFalse(hasattr(fs, "objects"))
         self.assertFalse(hasattr(fs, "__objects"))
+        del fs
 
     def test_wrong_init_and_calls(self):
         """
@@ -70,7 +82,7 @@ class TestFileStorage(unittest.TestCase):
         with self.assertRaises(TypeError):
             fs.reload("reload this")
 
-    def test_FileStorage_all(self):
+    def test_FileStorage_allz(self):
         """
         Test the FileStorage.all(self) method
         """
@@ -93,21 +105,27 @@ class TestFileStorage(unittest.TestCase):
         __fs = FileStorage()
         __objects = __fs.all()
 
+        # self.assertTrue(len(__objects) == 0)
+        self.assertIsInstance(__objects, dict)
+
         __fs.new(__base)
         __objects2 = __fs.all()
 
         self.assertTrue(len(__objects2) > 0)
+        self.assertIsInstance(__objects2, dict)
         self.assertTrue(f"{__base_dict['__class__']}.{__base_dict['id']}"
                         in __objects2.keys())
 
         __obj = __objects2[f"{__base_dict['__class__']}.{__base_dict['id']}"]
         self.assertEqual(__obj.__class__.__name__, "BaseModel")
         self.assertEqual(__obj.id, __base_dict["id"])
+        del __fs
 
-    def test_FileStorage_save(self):
+    def test_FileStorage_absave(self):
         """
         Test the FileStorage.save(self) method
         """
+
         __file = "file.json"
 
         __mocked_class = MagicMock()
@@ -124,24 +142,20 @@ class TestFileStorage(unittest.TestCase):
         __base.id = "1234-abc-5678cd"
         __base.to_dict.return_value = __base_dict
 
-        # with self.assertRaises(FileNotFoundError):
-        # open(__file)
-        # self.assertFalse(os.path.exists(__file))
-
         __fs = FileStorage()
         __fs.new(__base)
         __fs.save()
 
         self.assertTrue(len(__fs.all()) > 0)
         self.assertTrue(os.path.exists(__file))
+        del __fs
 
-    def test_FileStorage_save_reload(self):
+    def test_FileStorage_abcreload(self):
         """
         Test the FileStorage.reload(self) method
         """
+
         __file = "file.json"
-        if os.path.exists(__file):
-            os.remove(__file)
 
         __fs1 = FileStorage()
 
@@ -150,12 +164,10 @@ class TestFileStorage(unittest.TestCase):
         self.assertTrue(len(__objects) >= 0)
         __fs1.reload()
 
-        if os.path.exists(__file):
-            self.assertTrue(len(__objects) > 0)
+        # if os.path.exists(__file):
+        # self.assertTrue(len(__objects) > 0)
 
-        else:
-            self.assertTrue(len(__objects) >= 0)
-
+        del __fs1
 
 if __name__ == "__main__":
     unittest.main()

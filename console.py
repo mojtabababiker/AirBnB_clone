@@ -74,10 +74,11 @@ class HBNBCommand(cmd.Cmd):
              the [service_name] is entered it print the help page of
              this service.
              The [servise_name] should be a valide service name
-        """
+
         __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
                     'quit', 'show', 'update']
-
+        """
+        # TODO: costumize the help function
         super().do_help(line)
 
     def do_quit(self, line):
@@ -325,7 +326,6 @@ class HBNBCommand(cmd.Cmd):
                 if instance.__class__.__name__ == args[0]:
                     count += 1
             print(count)
-            return False
 
         elif pat_s.match(line):
             matched = pat_s.match(line)
@@ -359,7 +359,6 @@ class HBNBCommand(cmd.Cmd):
             for key, val in _dict.items():
                 _line = _class + ' ' + _id + ' ' + key + ' ' + str(val)
                 self.do_update(_line, True)
-            return False
 
         else:
             super().default(line)
