@@ -1,20 +1,20 @@
 #!/usr/bin/python3
 
 """
-console model is the code entry point for the AirBnB console project
-the console or the command line interpeter was build on the cmd.CMD
-python class.
+    console model is the code entry point for the AirBnB console project
+    the console or the command line interpeter was build on the cmd.CMD
+    python class.
 
-How to run it:
-    1] Interactive mode:
-        run it as executable file, or by python as model, eg..,
-            `$ ./console.py`
-            `$ python3 -m console.py`
-    2] Non-Interactive mode:
-        also can be used to execute a single command/script and exite
-        after finsh, eg..,
-             `$ echo '<command> <args>' | ./console.py`
-             `$ ./console.py <command> <args>`
+    How to run it:
+        1] Interactive mode:
+            run it as executable file, or by python as model, eg..,
+                `$ ./console.py`
+                `$ python3 -m console.py`
+        2] Non-Interactive mode:
+            also can be used to execute a single command/script and exite
+            after finsh, eg..,
+                `$ echo '<command> <args>' | ./console.py`
+                `$ ./console.py <command> <args>`
 """
 
 import cmd
@@ -34,13 +34,13 @@ from models.review import Review
 
 class HBNBCommand(cmd.Cmd):
     """
-    Syntax:
-       console.HBNBCommand(*args, **kwargs)
+        Syntax:
+        console.HBNBCommand(*args, **kwargs)
 
-    Description:
-        This class represent the command line interpeter of the AirBnB
-        project, which provides rich services for creating, editing,
-        and more
+        Description:
+            This class represent the command line interpeter of the AirBnB
+            project, which provides rich services for creating, editing,
+            and more
     """
 
     prompt = "(hbnb) "
@@ -57,85 +57,79 @@ class HBNBCommand(cmd.Cmd):
 
     def preloop(self):
         """
-        Check if the session is interactive session or non interactive
-        and make a query for all the saved BnB objects
+            Check if the session is interactive session or non interactive
+            and make a query for all the saved BnB objects
         """
         pass
 
     def do_help(self, line):
         """
-        help    shows all the console services, or a selcted service
+            help    shows all the console services, or a selcted service
 
-        Syntax:
-            help [service_name]
+            Syntax:
+                help [service_name]
 
-        Descriptions:
-            `help` shows the services that the console provides, and if
-             the [service_name] is entered it print the help page of
-             this service.
-             The [servise_name] should be a valide service name
+            Descriptions:
+                `help` shows the services that the console provides, and if
+                the [service_name] is entered it print the help page of
+                this service.
+                The [servise_name] should be a valide service name
 
-        __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
-                    'quit', 'show', 'update']
+            __docfun = ['EOF', 'all', 'creat', 'destroy', 'help',
+                        'quit', 'show', 'update']
         """
         # TODO: costumize the help function
         super().do_help(line)
 
     def do_quit(self, line):
         """
-        quit   Terminate the console and exit the program
+            quit   Terminate the console and exit the program
 
-        Syntax:
-            quit
+            Syntax:
+                quit
         """
         return True
 
     def do_EOF(self, *args):
         """
-        EOF | ^D    Terminate the console and exite the program
+            EOF | ^D    Terminate the console and exite the program
 
-        Syntax:
-            EOF
-            ^D
+            Syntax:
+                EOF
+                ^D
 
-        Descriptions:
-            Same as the quit function, this one iis used to handel
-            the End Of File situations
+            Descriptions:
+                Same as the quit function, this one iis used to handel
+                the End Of File situations
         """
         print()
         return True
 
     def emptyline(self, *args):
         """
-        Handle the empty line
+            Handle the empty line
         """
         pass
 
     # -------------helper functions-----------
     def get_args(self, line):
         """
-        Preprocessing the line from the interpeter before passing it
-        to the onecmd() function.
-        in this case we will handel the double qouted text, beside
-        extracting args from line
-        """
-        """
-        qouted_args = line.split('"')  # search for qouted arguments
-        args = qouted_args[0].split()  # split the rest of the args by space
-        if len(qouted_args) > 1:  # if there are qouted args
-            args.append(qouted_args[1])  # append them to args list
+            Preprocessing the line from the interpeter before passing it
+            to the onecmd() function.
+            in this case we will handel the double qouted text, beside
+            extracting args from line
         """
         args = shlex.split(line)
         return (args)
 
     def validate(self, args, args_num):
         """
-        Validate the commands arguments, and print the excpected error
-        message
+            Validate the commands arguments, and print the excpected error
+            message
 
-        Args:
-            args: the command line arguments list to validare
-            args_num: the number of arguments to validate
+            Args:
+                args: the command line arguments list to validare
+                args_num: the number of arguments to validate
         """
 
         if len(args) < 1 and args_num > 0:
@@ -176,14 +170,14 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, line):
         """
-        create    create a new modle instance
+            create    create a new modle instance
 
-        Syntax:
-            create <model_name>
+            Syntax:
+                create <model_name>
 
-        Descriptions:
-            `create` creates new instance of the model `model_name` and prints
-             its id, the `model_name` should be a valide class name.
+            Descriptions:
+                `create` creates new instance of the model `model_name` and prints
+                its id, the `model_name` should be a valide class name.
         """
         args = self.get_args(line)
         if not self.validate(args, 2):
@@ -195,18 +189,18 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, line):
         """
-        show    show informations about an instance
+            show    show informations about an instance
 
-        Syntax:
-            show <model_name> <instance_id>
+            Syntax:
+                show <model_name> <instance_id>
 
-        Descriptions:
-            `show` prints the string representation of an instance of the
-             <model_name> class which has the id <instance_id>.
-             The <model_name> should be a valide class name, and the
-             <instance_id> should be a valide instance ID.
-             The string representation consist of:
-                 '[claseName] (instance_id) instance_attrs_dict'
+            Descriptions:
+                `show` prints the string representation of an instance of the
+                <model_name> class which has the id <instance_id>.
+                The <model_name> should be a valide class name, and the
+                <instance_id> should be a valide instance ID.
+                The string representation consist of:
+                    '[claseName] (instance_id) instance_attrs_dict'
         """
         args = self.get_args(line)
         if not self.validate(args, 4):
@@ -217,16 +211,16 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, line):
         """
-        destroy    delete instance of a class
+            destroy    delete instance of a class
 
-        Syntax:
-            destroy <model_name> <instance_id>
+            Syntax:
+                destroy <model_name> <instance_id>
 
-        Descriptions:
-            `destroy` deletes the instance of the class <model_name> which
-             has the id of <instance_id>.
-             The <model_name> should be a valide class name, and the
-             <instance_id> should be a valide instance ID.
+            Descriptions:
+                `destroy` deletes the instance of the class <model_name> which
+                has the id of <instance_id>.
+                The <model_name> should be a valide class name, and the
+                <instance_id> should be a valide instance ID.
         """
         args = self.get_args(line)
         if not self.validate(args, 4):
@@ -236,18 +230,18 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """
-        all    print instances information
+            all    print instances information
 
-        Syntax:
-            all [model_name]
+            Syntax:
+                all [model_name]
 
-        Descriptions:
-            `all` prints the string representation of all the instance of
-             all the models, if [model_name] was provided and it's a
-             valide class name then `all` will prints only
-             the [model_name] instances information.
-             The string represntations consists of:
-                 '["[className] (instance_id) instance_attrs_dict"]'
+            Descriptions:
+                `all` prints the string representation of all the instance of
+                all the models, if [model_name] was provided and it's a
+                valide class name then `all` will prints only
+                the [model_name] instances information.
+                The string represntations consists of:
+                    '["[className] (instance_id) instance_attrs_dict"]'
         """
         args = self.get_args(line)
         instances_list = list()
@@ -269,17 +263,17 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, line, *iner_call):
         """
-        update    update instance attributes
+            update    update instance attributes
 
-        Syntax:
-            update <model_name> <instance_id> <atrr> "<value>"
+            Syntax:
+                update <model_name> <instance_id> <atrr> "<value>"
 
-        Descriptions:
-            `update` updates the <model_name> instance with the ID of
-             <instance_id>, by adding or changing the value of the
-             attribute <attr> with the <value> value.
-             Both the <model_name> and <instance_id> should be valide
-             and the <attr> should be valide instance attribute.
+            Descriptions:
+                `update` updates the <model_name> instance with the ID of
+                <instance_id>, by adding or changing the value of the
+                attribute <attr> with the <value> value.
+                Both the <model_name> and <instance_id> should be valide
+                and the <attr> should be valide instance attribute.
         """
         args = self.get_args(line)
         if not self.validate(args, 6):
@@ -303,8 +297,8 @@ class HBNBCommand(cmd.Cmd):
     # -------------- Advanced Services --------------
     def default(self, line):
         """
-        Overide the Cmd.defautl method to controle the advance services
-        syntax
+            Overide the Cmd.defautl method to controle the advance services
+            syntax
         """
 
         _pat = r'(\w+)\.(update)\(([-"\w\s]*),? ?([-"\w\d]*),? ?([-"\w\d]*)\)'
