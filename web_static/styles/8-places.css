@@ -1,0 +1,147 @@
+.places {
+    display: flex;
+    flex-flow: row wrap;  /* flex-direction and flex-wrap */
+    justify-content: space-evenly;
+    margin: 10px;
+    padding: 20px;
+    position: relative;
+    text-align: center;
+}
+
+.places h1 {
+    display: block;
+    flex: 0 0 100%;
+    font-size: 30px;
+    align-self: flex-start;
+    text-align: start;
+    /* position: relative; */
+    /* top: 0%; */
+    /* left: 0% */
+}
+
+.places article {
+    width: 410px;
+    position: relative;
+    /* display: inline-block; */
+    margin: 20px;
+    padding: 20px;    
+    border: 1px solid #FF5A5F;
+    border-radius: 4px;
+}
+
+.places h2 {
+    font-size: 30px;
+    text-align: center;
+}
+
+/* 
+====================================
+            Price by Night
+====================================
+*/
+.price_by_night {
+    display: flex;
+    color: #FF5A5F;
+    border-radius: 50%;
+    border: 4px solid #FF5A5F;
+    align-items: center;
+    min-width: 60px;
+    min-height: 60px;
+    font-size: 30px;
+    position: absolute;
+    /* padding: 8.3% 2%; */
+    padding: 20px 10px;
+    margin: 20px 20px 0px 0px;
+    right: 0%;
+    top: 0%;
+}
+
+/* 
+=====================================
+            Information
+=====================================
+*/
+.information:after,
+.information:before {
+    content: "";
+    display: block;
+}
+.information:after {
+    clear: both;
+}
+.information {
+    clear: both;
+    height: 80px;
+    position: relative;
+    margin-top: 15%;
+    border-top: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
+}
+
+/*
+==============================
+        Max Guests Number
+==============================
+*/
+.information .max_guest {
+    width: 100px;
+    height: 100%;
+    margin-left: 5%;
+    margin-right: 2.5%;
+    padding-top: 56px;
+    float: left;
+    background: url("/web_static/images/icon_group.png") 50% 10%;
+    background-repeat: no-repeat;
+}
+
+/* 
+==============================
+        Number Rooms
+==============================
+*/
+.information .number_rooms {
+    width: 100px;
+    height: 100%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    padding-top: 56px;
+    float: left;
+    background: url("/web_static/images/icon_bed.png") 50% 10%;
+    background-repeat: no-repeat;
+}
+
+/* 
+================================
+        Number Bathrooms
+================================
+*/
+.information .number_bathrooms {
+    width: 100px;
+    height: 100%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    padding-top: 56px;
+    float: left;
+    background: url("/web_static/images/icon_bath.png") 50% 10%;
+    background-repeat: no-repeat;
+}
+
+/*
+==============================================
+                    User
+==============================================
+*/
+.user {
+    text-align: left;
+    margin-top: 5%;
+    margin-bottom: 2.5%;;
+}
+
+/*
+==============================================
+                    Description
+==============================================
+*/
+.description {
+    text-align: left;
+}
