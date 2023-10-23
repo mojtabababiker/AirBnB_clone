@@ -1,6 +1,8 @@
 # BnB-Clone Web Static
 
 ## Preface:
+
+
 This directory represents the first prototype of the *Front-end* part for the BnB-Clone project..
 
 
